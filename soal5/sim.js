@@ -284,7 +284,7 @@ function simulate()
     var w2 = [(xmin - x2), (xmax - x2), (ymin - y2), (ymax - y2)];
     for (var i = 0; i < 4; i++)
     {
-        var ksi = Math.max(0, 0.03 - Math.abs(w1[i]));
+        var ksi = Math.max(0, 0.25*D1 - Math.abs(w1[i]));
         var vx = vx1;
         var vy = vy1;
         var v = Math.sqrt((vx*vx)+(vy*vy));
@@ -302,7 +302,7 @@ function simulate()
     }
     for (var i = 0; i < 4; i++)
     {
-        var ksi = Math.max(0, 0.03 - Math.abs(w2[i]));
+        var ksi = Math.max(0, 0.25*D2 - Math.abs(w2[i]));
         var vx = vx2;
         var vy = vy2;
         var v = Math.sqrt((vx*vx)+(vy*vy));
@@ -320,7 +320,7 @@ function simulate()
     }
 
     //calculate force due to collision between grains
-    var ksi = Math.max(0, (0.03 - R));
+    var ksi = Math.max(0, (0.5*(D1+D2) - R));
     var vx = vx2 - vx1;
     var vy = vy2 - vy1;
     var v = Math.sqrt((vx*vx)+(vy*vy));
@@ -396,6 +396,8 @@ function readParameters()
     vy2 = getValue(lines , "VLY2");
     q1 = getValue(lines , "CHG1");
     q2 = getValue(lines , "CHG2");
+    D1 = getValue(lines, "DIA1");
+    D2 = getValue(lines, "DIA2");
 }
 
 function loadParameters()
@@ -435,6 +437,8 @@ function loadParameters()
     lines += "VLY2 0\n"; // y component velocity of grain2 m/s
     lines += "CHG1 -0.007\n"; //charge of grain1 uC
     lines += "CHG2 0.01\n"; //charge of grain2 uC
+    lines += "DIA1 0.03\n"; //diameter of grain1 m
+    lines += "DIA2 0.03\n"; //diameter of grain2 m
 
 	var ta = arguments[0];
 	ta.value = lines ;
@@ -461,7 +465,7 @@ function drawCanvas()
     var xx = x1;
     var yy = y1;
     var R1 = transform(xx, yy);
-    var R2 = transform(xx + 0.03, yy);
+    var R2 = transform(xx + 0.5*D1, yy);
 
     cx.beginPath();
     cx.arc(R1.X, R1.Y, (R2.X - R1.X), 0, 2 * Math.PI );
@@ -478,7 +482,7 @@ function drawCanvas()
     var xx = x2;
     var yy = y2;
     var R1 = transform(xx, yy);
-    var R2 = transform(xx + 0.03, yy);
+    var R2 = transform(xx + 0.5*D2, yy);
 
     cx.beginPath();
     cx.arc(R1.X, R1.Y, (R2.X - R1.X), 0, 2 * Math.PI );
